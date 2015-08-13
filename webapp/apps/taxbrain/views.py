@@ -14,7 +14,6 @@ sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 
 
 import taxcalc
-import dropq
 import datetime
 import logging
 from six.moves.urllib.parse import urlparse, parse_qs # https://bugs.launchpad.net/rally/+bug/1403433

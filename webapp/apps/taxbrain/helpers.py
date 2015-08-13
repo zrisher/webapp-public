@@ -3,9 +3,14 @@ from collections import namedtuple
 import numbers
 import os
 import pandas as pd
-import dropq
 import sys
 import time
+
+try:
+    import dropq
+    dropq_available = True
+except ImportError:
+    dropq_available = False
 
 #Mock some module for imports because we can't fit them on Heroku slugs
 from mock import Mock
@@ -102,6 +107,12 @@ def default_taxcalc_data(cls, start_year, metadata=False):
 tcversion_info = taxcalc._version.get_versions()
 taxcalc_version = ".".join([tcversion_info['version'], tcversion_info['full'][:6]])
 
+if dropq_available:
+    dqversion_info = dropq._version.get_versions()
+    dropq_version = ".".join([dqversion_info['version'], dqversion_info['full'][:6]])
+else:
+    dropq_version = 0
+
 TAXCALC_COMING_SOON_FIELDS = [
     '_Dividend_rt1', '_Dividend_thd1',
     '_Dividend_rt2', '_Dividend_thd2',
@@ -164,7 +175,26 @@ TAXCALC_RESULTS_DFTABLE_COL_FORMATS = [
     [         1,   '%', 1],  # "%age Tax Decrease",
     [         1,   '%', 1],  # "Share of Overall Change"
 ]
-TAXCALC_RESULTS_BIN_ROW_KEYS = dropq.dropq.bin_row_names
+if dropq_available:
+    TAXCALC_RESULTS_BIN_ROW_KEYS = dropq.dropq.bin_row_names
+    TAXCALC_RESULTS_DEC_ROW_KEYS = dropq.dropq.decile_row_names
+    TAXCALC_RESULTS_TOTAL_ROW_KEYS = dropq.dropq.total_row_names
+else:
+    TAXCALC_RESULTS_BIN_ROW_KEYS = [
+        'less_than_10', 'ten_twenty', 'twenty_thirty', 'thirty_forty',
+        'forty_fifty', 'fifty_seventyfive', 'seventyfive_hundred',
+        'hundred_twohundred', 'twohundred_fivehundred',
+        'fivehundred_thousand', 'thousand_up', 'all'
+    ]
+    TAXCALC_RESULTS_DEC_ROW_KEYS = [
+        'perc0-10', 'perc10-20', 'perc20-30', 'perc30-40',
+        'perc40-50', 'perc50-60', 'perc60-70', 'perc70-80',
+        'perc80-90', 'perc90-100', 'all'
+    ]
+    TAXCALC_RESULTS_TOTAL_ROW_KEYS = [
+        'ind_tax', 'payroll_tax', 'combined_tax'
+    ]
+
 TAXCALC_RESULTS_BIN_ROW_KEY_LABELS = {
     'less_than_10':'Less than 10',
     'ten_twenty':'10-20',
@@ -179,7 +209,6 @@ TAXCALC_RESULTS_BIN_ROW_KEY_LABELS = {
     'thousand_up':'1000+',
     'all':'All'
 }
-TAXCALC_RESULTS_DEC_ROW_KEYS = dropq.dropq.decile_row_names
 TAXCALC_RESULTS_DEC_ROW_KEY_LABELS = {
     'perc0-10':'0-10%',
     'perc10-20':'10-20%',
@@ -206,7 +235,6 @@ TAXCALC_RESULTS_TABLE_LABELS = {
     'cdf_bin': 'Combined Payroll and Individual Income Tax: Difference between Base and User plans by expanded income bin',
     'fiscal_tots': 'Total Liabilities Change by Calendar Year',
 }
-TAXCALC_RESULTS_TOTAL_ROW_KEYS = dropq.dropq.total_row_names
 TAXCALC_RESULTS_TOTAL_ROW_KEY_LABELS = {
     'ind_tax':'Individual Income Tax Liability Change',
     'payroll_tax':'Payroll Tax Liability Change',
@@ -723,6 +751,38 @@ def default_policy(first_budget_year):
     TAXCALC_DEFAULT_PARAMS = default_taxcalc_params
 
     return TAXCALC_DEFAULT_PARAMS
+
+"""
+zrisher - Still needed?
+# Create a list of default parameters
+TAXCALC_DEFAULT_PARAMS_JSON = taxcalc.parameters.Parameters.default_data(metadata=True, start_year=2015)
+default_taxcalc_params = {}
+for k,v in TAXCALC_DEFAULT_PARAMS_JSON.iteritems():
+    param = TaxCalcParam(k,v)
+    default_taxcalc_params[param.nice_id] = param
+
+#Behavior Effects not in params.json yet. Add in the appropriate info so that
+#the params dictionary has the right info
+# value, col_label, long_name, description, irs_ref, notes
+be_params = []
+be_inc_param = {'value':[0], 'col_label':['label'], 'long_name':'Income Effect',
+                'description': 'Behavior Effects', 'irs_ref':'', 'notes':''}
+be_sub_param = {'value':[0], 'col_label':['label'], 'long_name':'Substitution Effect',
+                'description': 'Behavior Effects', 'irs_ref':'', 'notes':''}
+be_cg_per_param = {'value':[0], 'col_label':['label'], 'long_name':'Persistent',
+                'description': 'Behavior Effects', 'irs_ref':'', 'notes':''}
+be_cg_trn_param= {'value':[0], 'col_label':['label'], 'long_name':'Transitory',
+                'description': 'Behavior Effects', 'irs_ref':'', 'notes':''}
+be_params.append(('_BE_inc', be_inc_param))
+be_params.append(('_BE_sub', be_sub_param))
+be_params.append(('_BE_cg_per', be_cg_per_param))
+be_params.append(('_BE_cg_trn', be_cg_trn_param))
+for k,v in be_params:
+    param = TaxCalcParam(k,v)
+    default_taxcalc_params[param.nice_id] = param
+
+TAXCALC_DEFAULT_PARAMS = default_taxcalc_params
+"""
 
 # Debug TaxParams
 """
