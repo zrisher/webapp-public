@@ -1,0 +1,43 @@
+name: ospc-webapp-dev
+channels:
+  - https://conda.binstar.org/ospc
+  - defaults
+dependencies:
+  - python>=2.7
+  - numba
+  - taxcalc
+  - reportlab
+  - boto
+  - gevent
+  - pillow
+#  - nomkl # not available on Windows
+  - pip:
+    - argparse==1.2.1
+    - boto
+    - dj-database-url==0.3.0
+    - dj-static==0.0.6
+    - django==1.8.2
+    - django_import_export
+    - django-debug-toolbar==1.2.1
+    - django-flatblocks
+    - django-hermes
+    - django-htmlmin
+    - django-ipware
+    - django-queryset-csv==0.2.10
+    - django-storages
+    - django-user-accounts
+    - django-uuidfield==0.5.0
+    - djrill
+    - eventlet
+    - gunicorn==19.1.1
+    - jsonfield
+    - mock
+    - newrelic==2.58.2.45
+    - pdfkit==0.4.1
+    - pytest
+    - pytest-django
+    - requests_mock
+    - static3==0.5.1
+    - waitress
+#    - wsgiref==0.1.2 # only need for python < 3.3
+    - yolk==0.4.3
