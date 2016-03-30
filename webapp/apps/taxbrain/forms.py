@@ -1,3 +1,4 @@
+from __future__ import print_function
 from django import forms
 from django.forms import ModelForm
 from django.utils.translation import ugettext_lazy as _
@@ -136,7 +137,7 @@ class PersonalExemptionForm(ModelForm):
         are detected.
         """
 
-        for param_id, param in self._default_params.iteritems():
+        for param_id, param in self._default_params.items():
             if param.coming_soon or param.hidden:
                 continue
 
@@ -210,11 +211,11 @@ class PersonalExemptionForm(ModelForm):
 
                 if param.tc_id == '_ID_BenefitSurtax_Switch':
                     """switches = ['ID_BenefitSurtax_Switch_' + str(i) for i in range(6)]
-                    print "getting the model attribute"
+                    print("getting the model attribute")
                     for switch in switches:
-                        print "switch is ", switch
+                        print("switch is ", switch)
                         val = getattr(model, switch)
-                        print "val is ", val"""
+                        print("val is ", val)"""
                     attrs['checked'] = False
                     widgets[field.id] = forms.CheckboxInput(attrs=attrs, check_test=bool_like)
                 else:

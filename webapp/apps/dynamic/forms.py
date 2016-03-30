@@ -122,7 +122,7 @@ class DynamicElasticityInputsModelForm(ModelForm):
         are detected.
         """
 
-        for param_id, param in self._default_params.iteritems():
+        for param_id, param in self._default_params.items():
             if param.coming_soon or param.hidden:
                 continue
 
@@ -317,7 +317,7 @@ class DynamicBehavioralInputsModelForm(ModelForm):
         are detected.
         """
 
-        for param_id, param in self._default_params.iteritems():
+        for param_id, param in self._default_params.items():
             if param.coming_soon or param.hidden:
                 continue
 
@@ -512,7 +512,7 @@ class DynamicInputsModelForm(ModelForm):
         are detected.
         """
 
-        for param_id, param in self._default_params.iteritems():
+        for param_id, param in self._default_params.items():
             if param.coming_soon or param.hidden:
                 continue
 

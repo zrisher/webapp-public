@@ -1,3 +1,4 @@
+from __future__ import print_function
 import os
 import requests
 import dropq
@@ -147,7 +148,7 @@ def default_behavior_parameters(first_budget_year):
                                                         metadata=True,
                                                         start_year=first_budget_year)
 
-    for k,v in BEHAVIOR_DEFAULT_PARAMS_JSON.iteritems():
+    for k,v in BEHAVIOR_DEFAULT_PARAMS_JSON.items():
         param = TaxCalcParam(k,v, first_budget_year)
         default_behavior_params[param.nice_id] = param
 
@@ -172,7 +173,7 @@ def default_elasticity_parameters(first_budget_year):
 
     ELASTICITY_DEFAULT_PARAMS_JSON = {'elastic_gdp': elasticity_of_gdp}
 
-    for k,v in ELASTICITY_DEFAULT_PARAMS_JSON.iteritems():
+    for k,v in ELASTICITY_DEFAULT_PARAMS_JSON.items():
         param = TaxCalcParam(k,v, first_budget_year)
         default_elasticity_params[param.nice_id] = param
 
@@ -187,7 +188,7 @@ def default_parameters(first_budget_year):
         OGUSA_DEFAULT_PARAMS_JSON = json.load(f)
 
     default_ogusa_params = {}
-    for k,v in OGUSA_DEFAULT_PARAMS_JSON.iteritems():
+    for k,v in OGUSA_DEFAULT_PARAMS_JSON.items():
         #TaxCalcParams expect list
         if 'value' in v:
             v['value'] = [v['value']]
@@ -214,7 +215,7 @@ def filter_ogusa_only(user_values):
 
     for k, v in user_values.items():
         if k in unused_names:
-            print "Removing ", k, v
+            print("Removing ", k, v)
             del user_values[k]
         else:
             user_values[k] = float(v)
@@ -330,7 +331,7 @@ def elast_results_to_tables(results, first_budget_year):
 
             table_data = results[table_id]
             #Displaying as a percentage, so multiply by 100
-            for k, v in table_data.iteritems():
+            for k, v in table_data.items():
                 table_data[k] = list(map(str, map(format_float_values, v)))
             multi_year_cells = False
 
@@ -419,7 +420,7 @@ def ogusa_results_to_tables(results, first_budget_year):
 
             table_data = results[table_id]
             #Displaying as a percentage, so multiply by 100
-            for k, v in table_data.iteritems():
+            for k, v in table_data.items():
                 table_data[k] = list(map(str, map(lambda x: 100.*x, map(float, v))))
             multi_year_cells = False
 

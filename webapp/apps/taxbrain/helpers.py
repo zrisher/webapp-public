@@ -1,3 +1,4 @@
+from __future__ import print_function
 from collections import namedtuple
 import numbers
 import os
@@ -364,7 +365,7 @@ def leave_name_in(key, val, dd):
     elif key in ["elastic_gdp"]:
         return True
     else:
-        print "Don't have this pair: ", key, val
+        print("Don't have this pair: ", key, val)
         underscore_name_in_defaults = "_" + key in dd
         is_cpi_name = key.endswith("_cpi")
         is_array_name = (key.endswith("_0") or key.endswith("_1") or
@@ -398,7 +399,7 @@ def package_up_vars(user_values, first_budget_year):
                                         metadata=True))
     for k, v in user_values.items():
         if not leave_name_in(k, v, dd):
-            print "Removing ", k, v
+            print("Removing ", k, v)
             del user_values[k]
 
     def discover_cpi_flag(param):
@@ -652,7 +653,7 @@ def default_behavior(first_budget_year):
                                                         metadata=True,
                                                         start_year=first_budget_year)
 
-    for k,v in BEHAVIOR_DEFAULT_PARAMS_JSON.iteritems():
+    for k,v in BEHAVIOR_DEFAULT_PARAMS_JSON.items():
         param = TaxCalcParam(k,v, first_budget_year)
         default_behavior_params[param.nice_id] = param
 
@@ -667,7 +668,7 @@ def default_policy(first_budget_year):
                                                        start_year=first_budget_year)
 
     default_taxcalc_params = {}
-    for k,v in TAXCALC_DEFAULT_PARAMS_JSON.iteritems():
+    for k,v in TAXCALC_DEFAULT_PARAMS_JSON.items():
         param = TaxCalcParam(k,v, first_budget_year)
         default_taxcalc_params[param.nice_id] = param
 
@@ -723,10 +724,9 @@ def default_policy(first_budget_year):
 
     return TAXCALC_DEFAULT_PARAMS
 
-
 # Debug TaxParams
 """
-for k, param in TAXCALC_DEFAULT_PARAMS.iteritems():
+for k, param in TAXCALC_DEFAULT_PARAMS.items():
     print(' -- ' + k + ' -- ')
     print('TC id:   ' + param.tc_id)
     print('Nice id: ' + param.nice_id)
@@ -862,9 +862,9 @@ def taxcalc_results_to_tables(results, first_budget_year):
 
         # Debug results
         """
-        print '\n ----- result ------- '
-        print '{0}'.format(table)
-        print ' ----- result ------- \n'
+        print('\n ----- result ------- ')
+        print('{0}'.format(table))
+        print(' ----- result ------- \n')
         """
 
     tables['result_years'] = years

@@ -1,3 +1,4 @@
+from __future__ import print_function
 import csv
 import pdfkit
 import json
@@ -16,7 +17,7 @@ import taxcalc
 import dropq
 import datetime
 import logging
-from urlparse import urlparse, parse_qs
+from six.moves.urllib.parse import urlparse, parse_qs # https://bugs.launchpad.net/rally/+bug/1403433
 from ipware.ip import get_real_ip
 
 from django.core import serializers
@@ -150,7 +151,7 @@ def personal_results(request):
                 if type(value) == type(unicode()):
                     curr_dict[key] = [convert_val(x) for x in value.split(',') if x]
                 else:
-                    print "missing this: ", key
+                    print("missing this: ", key)
 
             worker_data = {k:v for k, v in curr_dict.items() if not (v == [] or v == None)}
             benefit_surtax_fixup(worker_data)
@@ -158,10 +159,10 @@ def personal_results(request):
             ip = get_real_ip(request)
             if ip is not None:
                 # we have a real, public ip address for user
-                print "BEGIN DROPQ WORK FROM: ", ip
+                print("BEGIN DROPQ WORK FROM: ", ip)
             else:
                 # we don't have a real, public ip address for user
-                print "BEGIN DROPQ WORK FROM: unknown IP"
+                print("BEGIN DROPQ WORK FROM: unknown IP")
 
             # start calc job
             submitted_ids, max_q_length = dropq_compute.submit_dropq_calculation(worker_data, int(start_year))
@@ -318,7 +319,7 @@ def output_detail(request, pk):
         try:
             jobs_ready = dropq_compute.dropq_results_ready(jobs_to_check)
         except JobFailError as jfe:
-            print jfe
+            print(jfe)
             return render_to_response('taxbrain/failed.html')
 
         if all(jobs_ready):
@@ -347,7 +348,7 @@ def output_detail(request, pk):
                     return JsonResponse({'eta': exp_num_minutes}, status=200)
 
             else:
-                print "rendering not ready yet"
+                print("rendering not ready yet")
                 return render_to_response('taxbrain/not_ready.html', {'eta': '100'}, context_instance=RequestContext(request))
 
 

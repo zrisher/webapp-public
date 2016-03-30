@@ -1,3 +1,4 @@
+from __future__ import print_function
 import dropq
 import os
 from ..taxbrain.helpers import package_up_vars, arrange_totals_by_row 
@@ -33,11 +34,11 @@ class DynamicCompute(DropqCompute):
         return response
 
     def submit_ogusa_calculation(self, mods, first_budget_year, microsim_data):
-        print "mods is ", mods
+        print("mods is ", mods)
         ogusa_mods = filter_ogusa_only(mods)
         microsim_params = package_up_vars(microsim_data, first_budget_year)
-        print "submit dynamic work"
-        print "ogusa_mods is ", ogusa_mods
+        print("submit dynamic work")
+        print("ogusa_mods is ", ogusa_mods)
 
         hostnames = OGUSA_WORKERS
 
@@ -53,7 +54,7 @@ class DynamicCompute(DropqCompute):
         job_ids = []
         guids = []
         hostname_idx = get_ogusa_worker_idx()
-        print "hostname_idx is", hostname_idx
+        print("hostname_idx is", hostname_idx)
         submitted = False
         registered = False
         attempts = 0
@@ -62,24 +63,24 @@ class DynamicCompute(DropqCompute):
             try:
                 response = self.remote_submit_job(theurl, data=data, timeout=TIMEOUT_IN_SECONDS)
                 if response.status_code == 200:
-                    print "submitted: ", hostnames[hostname_idx]
+                    print("submitted: ", hostnames[hostname_idx])
                     submitted = True
                     resp_data = json.loads(response.text)
                     job_ids.append((resp_data['job_id'], hostnames[hostname_idx]))
                     guids.append((resp_data['job_id'], resp_data.get('guid', 'None')))
                 else:
-                    print "FAILED: ", hostnames[hostname_idx]
+                    print("FAILED: ", hostnames[hostname_idx])
                     attempts += 1
             except Timeout:
-                print "Couldn't submit to: ", hostnames[hostname_idx]
+                print("Couldn't submit to: ", hostnames[hostname_idx])
                 increment_ogusa_worker_idx()
                 attempts += 1
             except RequestException as re:
-                print "Something unexpected happened: ", re
+                print("Something unexpected happened: ", re)
                 increment_ogusa_worker_idx()
                 attempts += 1
             if attempts > MAX_ATTEMPTS_SUBMIT_JOB:
-                print "Exceeded max attempts. Bailing out."
+                print("Exceeded max attempts. Bailing out.")
                 increment_ogusa_worker_idx()
                 raise IOError()
 
@@ -96,19 +97,19 @@ class DynamicCompute(DropqCompute):
 
                 register = self.remote_register_job(reg_url, data=params, timeout=TIMEOUT_IN_SECONDS)
                 if response.status_code == 200:
-                    print "registered: ", hostnames[hostname_idx]
+                    print("registered: ", hostnames[hostname_idx])
                     registered = True
                 else:
-                    print "FAILED: ", hostnames[hostname_idx]
+                    print("FAILED: ", hostnames[hostname_idx])
                     attempts += 1
             except Timeout:
-                print "Couldn't submit to: ", hostnames[hostname_idx]
+                print("Couldn't submit to: ", hostnames[hostname_idx])
                 attempts += 1
             except RequestException as re:
-                print "Something unexpected happened: ", re
+                print("Something unexpected happened: ", re)
                 attempts += 1
             if attempts > MAX_ATTEMPTS_SUBMIT_JOB:
-                print "Exceeded max attempts. Bailing out."
+                print("Exceeded max attempts. Bailing out.")
                 raise IOError()
 
         # We increment upon exceptions to submit, but once we have submitted and
@@ -144,12 +145,12 @@ class DynamicCompute(DropqCompute):
             versions = [r.get('ogusa_version', None) for r in ans]
             if not all([ver==ogusa_version for ver in versions]):
                 msg ="Got different taxcalc versions from workers. Bailing out"
-                print msg
+                print(msg)
                 raise IOError(msg)
             versions = [r.get('dropq_version', None) for r in ans]
             if not all([same_version(ver, dropq_version) for ver in versions]):
                 msg ="Got different dropq versions from workers. Bailing out"
-                print msg
+                print(msg)
                 raise IOError(msg)
 
         return results

@@ -1,3 +1,4 @@
+from __future__ import print_function
 import dropq
 import os
 from .helpers import package_up_vars
@@ -55,12 +56,12 @@ class DropqCompute(object):
 
     def submit_calculation(self, mods, first_budget_year, url_template,
                            start_budget_year=0):
-        print "mods is ", mods
+        print("mods is ", mods)
         user_mods = package_up_vars(mods, first_budget_year)
         if not bool(user_mods):
             return False
-        print "user_mods is ", user_mods
-        print "submit work"
+        print("user_mods is ", user_mods)
+        print("submit work")
         user_mods={first_budget_year:user_mods}
         years = list(range(start_budget_year,NUM_BUDGET_YEARS))
 
@@ -71,7 +72,7 @@ class DropqCompute(object):
         wnc.current_offset = (dropq_worker_offset + NUM_BUDGET_YEARS) % len(DROPQ_WORKERS)
         wnc.save()
         hostnames = DROPQ_WORKERS[dropq_worker_offset: dropq_worker_offset + NUM_BUDGET_YEARS]
-        print "hostnames: ", hostnames
+        print("hostnames: ", hostnames)
         num_hosts = len(hostnames)
         data = {}
         data['user_mods'] = json.dumps(user_mods)
@@ -87,7 +88,7 @@ class DropqCompute(object):
                 try:
                     response = self.remote_submit_job(theurl, data=data, timeout=TIMEOUT_IN_SECONDS)
                     if response.status_code == 200:
-                        print "submitted: ", hostnames[hostname_idx]
+                        print("submitted: ", hostnames[hostname_idx])
                         year_submitted = True
                         response_d = response.json()
                         job_ids.append((response_d['job_id'], hostnames[hostname_idx]))
@@ -95,19 +96,19 @@ class DropqCompute(object):
                         if response_d['qlength'] > max_queue_length:
                             max_queue_length = response_d['qlength']
                     else:
-                        print "FAILED: ", str(y), hostnames[hostname_idx]
+                        print("FAILED: ", str(y), hostnames[hostname_idx])
                         hostname_idx = (hostname_idx + 1) % num_hosts
                         attempts += 1
                 except Timeout:
-                    print "Couldn't submit to: ", hostnames[hostname_idx]
+                    print("Couldn't submit to: ", hostnames[hostname_idx])
                     hostname_idx = (hostname_idx + 1) % num_hosts
                     attempts += 1
                 except RequestException as re:
-                    print "Something unexpected happened: ", re
+                    print("Something unexpected happened: ", re)
                     hostname_idx = (hostname_idx + 1) % num_hosts
                     attempts += 1
                 if attempts > MAX_ATTEMPTS_SUBMIT_JOB:
-                    print "Exceeded max attempts. Bailing out."
+                    print("Exceeded max attempts. Bailing out.")
                     raise IOError()
 
         return job_ids, max_queue_length
@@ -122,7 +123,7 @@ class DropqCompute(object):
                 rep = job_response.text
                 if rep == 'YES':
                     jobs_done[idx] = True
-                    print "got one!: ", id_
+                    print("got one!: ", id_)
                 elif rep == 'FAIL':
                     msg = '{0} failed on host: {1}'.format(id_, hostname)
                     raise JobFailError(msg)
@@ -167,12 +168,12 @@ class DropqCompute(object):
             versions = [r.get('taxcalc_version', None) for r in ans]
             if not all([ver==taxcalc_version for ver in versions]):
                 msg ="Got different taxcalc versions from workers. Bailing out"
-                print msg
+                print(msg)
                 raise IOError(msg)
             versions = [r.get('dropq_version', None) for r in ans]
             if not all([same_version(ver, dropq_version) for ver in versions]):
                 msg ="Got different dropq versions from workers. Bailing out"
-                print msg
+                print(msg)
                 raise IOError(msg)
 
         fiscal_tots = arrange_totals_by_row(fiscal_tots,
@@ -203,12 +204,12 @@ class DropqCompute(object):
             versions = [r.get('taxcalc_version', None) for r in ans]
             if not all([ver==taxcalc_version for ver in versions]):
                 msg ="Got different taxcalc versions from workers. Bailing out"
-                print msg
+                print(msg)
                 raise IOError(msg)
             versions = [r.get('dropq_version', None) for r in ans]
             if not all([same_version(ver, dropq_version) for ver in versions]):
                 msg ="Got different dropq versions from workers. Bailing out"
-                print msg
+                print(msg)
                 raise IOError(msg)
 
         elasticity_gdp[u'gdp_elasticity_0'] = u'NA'

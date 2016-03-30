@@ -1,3 +1,4 @@
+from __future__ import print_function
 import json
 import datetime
 from urlparse import urlparse, parse_qs
@@ -88,7 +89,7 @@ def dynamic_input(request, pk):
 
             curr_dict = dict(model.__dict__)
             for key, value in curr_dict.items():
-                print "got this ", key, value
+                print("got this ", key, value)
 
             # get macrosim data from form
             worker_data = {k:v for k, v in curr_dict.items() if v not in (u'', None, [])}
@@ -106,7 +107,7 @@ def dynamic_input(request, pk):
                     except ValueError:
                         taxbrain_dict[key] = [make_bool(x) for x in value.split(',') if x]
                 else:
-                    print "missing this: ", key
+                    print("missing this: ", key)
 
 
             microsim_data = {k:v for k, v in taxbrain_dict.items() if not (v == [] or v == None)}
@@ -183,7 +184,7 @@ def dynamic_behavioral(request, pk):
 
             curr_dict = dict(model.__dict__)
             for key, value in curr_dict.items():
-                print "got this ", key, value
+                print("got this ", key, value)
 
             for key, value in curr_dict.items():
                 if type(value) == type(unicode()):
@@ -192,7 +193,7 @@ def dynamic_behavioral(request, pk):
                     except ValueError:
                         curr_dict[key] = [make_bool(x) for x in value.split(',') if x]
                 else:
-                    print "missing this: ", key
+                    print("missing this: ", key)
 
             # get macrosim data from form
             worker_data = {k:v for k, v in curr_dict.items() if v not in (u'', None, [])}
@@ -210,7 +211,7 @@ def dynamic_behavioral(request, pk):
                     except ValueError:
                         taxbrain_dict[key] = [make_bool(x) for x in value.split(',') if x]
                 else:
-                    print "missing this: ", key
+                    print("missing this: ", key)
 
             microsim_data = {k:v for k, v in taxbrain_dict.items() if not (v == [] or v == None)}
 
@@ -281,7 +282,7 @@ def dynamic_elasticities(request, pk):
 
             curr_dict = dict(model.__dict__)
             for key, value in curr_dict.items():
-                print "got this ", key, value
+                print("got this ", key, value)
 
             #Replace empty elasticity field with defaults
             for k,v in elasticity_default_params.items():
@@ -295,7 +296,7 @@ def dynamic_elasticities(request, pk):
                     except ValueError:
                         curr_dict[key] = [make_bool(x) for x in value.split(',') if x]
                 else:
-                    print "missing this: ", key
+                    print("missing this: ", key)
 
 
             # get macrosim data from form
@@ -314,7 +315,7 @@ def dynamic_elasticities(request, pk):
                     except ValueError:
                         taxbrain_dict[key] = [make_bool(x) for x in value.split(',') if x]
                 else:
-                    print "missing this: ", key
+                    print("missing this: ", key)
 
             microsim_data = {k:v for k, v in taxbrain_dict.items() if not (v == [] or v == None)}
 
