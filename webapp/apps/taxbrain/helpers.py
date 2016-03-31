@@ -73,14 +73,18 @@ def arrange_totals_by_row(tots, keys):
 
 def round_gt_one_to_nearest_int(values):
     ''' round every value to the nearest integer '''
+    print('-round_gt_one_to_nearest_int- BEGIN')
     def round_gt_one(x):
+        print('-round_gt_one- BEGIN')
         if x >= 1.0:
             return round(x)
         else:
             return x
     try:
+        print('-round_gt_one_to_nearest_int- Trying')
         rounded = map(round_gt_one, values)
     except TypeError:
+        print('-round_gt_one_to_nearest_int- Got type error, trying as iterator')
         rounded = [map(round_gt_one, val) for val in values]
 
     return rounded
@@ -93,10 +97,10 @@ def default_taxcalc_data(cls, start_year, metadata=False):
     dd = cls.default_data(metadata=metadata, start_year=start_year)
     if metadata:
         for k in dd:
-            dd[k]['value'] = round_gt_one_to_nearest_int(dd[k]['value'])
+            dd[k]['value'] = list(round_gt_one_to_nearest_int(dd[k]['value']))
     else:
         for k in dd:
-            dd[k] = round_gt_one_to_nearest_int(dd[k])
+            dd[k] = list(round_gt_one_to_nearest_int(dd[k]))
     return dd
 
 
@@ -558,7 +562,8 @@ class TaxCalcParam(object):
         self.__load_from_json(param_id, attributes, first_budget_year)
 
     def __load_from_json(self, param_id, attributes, first_budget_year):
-        values_by_year = attributes['value']
+        print('-__load_from_json- BEGIN')
+        values_by_year = list(attributes['value'])
         col_labels = attributes['col_label']
 
         self.tc_id = param_id
@@ -577,11 +582,16 @@ class TaxCalcParam(object):
 
         self.coming_soon = (self.tc_id in TAXCALC_COMING_SOON_FIELDS)
         self.hidden = (self.tc_id in TAXCALC_HIDDEN_FIELDS)
-
+        print('----')
+        print(param_id)
+        #print(dir(values_by_year))
+        #print('[%s]' % ', '.join(map(str, values_by_year)))
         # normalize single-year default lists [] to [[]]
         if not isinstance(values_by_year[0], list):
             values_by_year = [values_by_year]
 
+        #print('[%s]' % ', '.join(map(str, values_by_year)))
+        print('----')
         # organize defaults by column [[A1,B1],[A2,B2]] to [[A1,A2],[B1,B2]]
         values_by_col = [list(x) for x in zip(*values_by_year)]
 
@@ -672,6 +682,8 @@ class TaxCalcParam(object):
                     if self.min[0] == '_':
                         self.min = self.min[1:]
 
+        print('-__load_from_json- END')
+
 
 # Create a list of default Behavior parameters
 def default_behavior(first_budget_year):
@@ -697,8 +709,11 @@ def default_policy(first_budget_year):
 
     default_taxcalc_params = {}
     for k,v in TAXCALC_DEFAULT_PARAMS_JSON.items():
+        print('-default_policy- Create and store BEGIN')
+        print('-default_policy- Create and store BEGIN')
         param = TaxCalcParam(k,v, first_budget_year)
         default_taxcalc_params[param.nice_id] = param
+        print('-default_policy- Create and store END')
 
 
     #Growth assumptions not in default data yet. Add in the appropriate info so that
